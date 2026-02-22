@@ -20,12 +20,19 @@ export interface Objective {
   categoryContributions: string[]; // can contribute to multiple categories
 }
 
+export interface Level {
+  id: string;
+  number: number;
+  title: string;
+  objectives: Objective[];
+}
+
 export interface Category {
   id: string;
   name: string;
   icon: string; // lucide icon name
   color: string; // tailwind color token
-  objectives: Objective[];
+  levels: Level[];
 }
 
 export interface Child {
