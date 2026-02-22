@@ -12,6 +12,8 @@ import {
   BookOpen,
   Home,
   ChevronDown,
+  Lock,
+  Shield,
 } from "lucide-react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -40,17 +42,36 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ category, index }: CategoryCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedLevel, setExpandedLevel] = useState<string | null>(null);
   const Icon = iconMap[category.icon] || Heart;
   const colors = colorMap[category.color] || colorMap.forest;
 
-  // Calculate completion percentage
-  const allSubtasks = category.objectives.flatMap((o) => o.subtasks);
+  // Calculate completion across all levels
+  const allSubtasks = category.levels.flatMap((l) => l.objectives.flatMap((o) => o.subtasks));
   const completed = allSubtasks.filter((s) => s.status === "complete").length;
   const total = allSubtasks.length;
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   const inProgressCount = allSubtasks.filter((s) => s.status === "in_progress").length;
   const pendingCount = allSubtasks.filter((s) => s.status === "pending_approval").length;
+
+  // Per-level stats
+  const getLevelProgress = (levelId: string) => {
+    const level = category.levels.find((l) => l.id === levelId);
+    if (!level) return 0;
+    const subs = level.objectives.flatMap((o) => o.subtasks);
+    const done = subs.filter((s) => s.status === "complete").length;
+    return subs.length > 0 ? Math.round((done / subs.length) * 100) : 0;
+  };
+
+  const isLevelLocked = (levelIndex: number) => {
+    if (levelIndex === 0) return false;
+    // A level is locked if the previous level has no completed tasks
+    const prevLevel = category.levels[levelIndex - 1];
+    const prevSubs = prevLevel.objectives.flatMap((o) => o.subtasks);
+    const prevCompleted = prevSubs.filter((s) => s.status === "complete").length;
+    return prevCompleted === 0;
+  };
 
   return (
     <motion.div
@@ -65,7 +86,7 @@ const CategoryCard = ({ category, index }: CategoryCardProps) => {
         }`}
       >
         <div className="flex items-center gap-4 p-5">
-          <div className={`flex items-center justify-center`}>
+          <div className="flex items-center justify-center">
             <ProgressRing progress={progress} size={72} strokeWidth={5} color={colors.ring}>
               <div className={`flex h-12 w-12 items-center justify-center rounded-full ${colors.bg}`}>
                 <Icon className={`h-6 w-6 ${colors.icon}`} />
@@ -75,7 +96,12 @@ const CategoryCard = ({ category, index }: CategoryCardProps) => {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <h3 className="font-display text-lg font-bold text-foreground">{category.name}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-display text-lg font-bold text-foreground">{category.name}</h3>
+                <span className="text-xs text-muted-foreground font-medium">
+                  {category.levels.length} levels
+                </span>
+              </div>
               <ChevronDown
                 className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
                   isExpanded ? "rotate-180" : ""
@@ -114,8 +140,90 @@ const CategoryCard = ({ category, index }: CategoryCardProps) => {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 pt-1">
-              <ObjectiveTree objectives={category.objectives} />
+            <div className="px-5 pb-5 pt-1 space-y-3">
+              {category.levels.map((level, lvlIdx) => {
+                const locked = isLevelLocked(lvlIdx);
+                const lvlProgress = getLevelProgress(level.id);
+                const isLvlExpanded = expandedLevel === level.id;
+
+                return (
+                  <motion.div
+                    key={level.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: lvlIdx * 0.06 }}
+                  >
+                    <button
+                      onClick={() => !locked && setExpandedLevel(isLvlExpanded ? null : level.id)}
+                      className={`w-full text-left rounded-xl px-4 py-3 transition-all duration-200 ${
+                        locked
+                          ? "bg-muted/50 opacity-50 cursor-not-allowed"
+                          : isLvlExpanded
+                          ? "bg-secondary shadow-card"
+                          : "bg-secondary/50 hover:bg-secondary"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold ${
+                              locked
+                                ? "bg-muted text-locked-foreground"
+                                : lvlProgress === 100
+                                ? "bg-forest/20 text-forest"
+                                : `${colors.bg} ${colors.icon}`
+                            }`}
+                          >
+                            {locked ? <Lock className="h-4 w-4" /> : level.number}
+                          </div>
+                          <div className="min-w-0">
+                            <p className={`font-semibold text-sm ${locked ? "text-locked-foreground" : "text-foreground"}`}>
+                              {level.title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {level.objectives.length} objective{level.objectives.length !== 1 ? "s" : ""}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {!locked && (
+                            <span className="text-xs font-semibold text-muted-foreground">{lvlProgress}%</span>
+                          )}
+                          <ChevronDown
+                            className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
+                              isLvlExpanded ? "rotate-180" : ""
+                            } ${locked ? "opacity-30" : ""}`}
+                          />
+                        </div>
+                      </div>
+                      {!locked && (
+                        <div className="mt-2 h-1 rounded-full bg-border overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{ width: `${lvlProgress}%`, backgroundColor: colors.ring }}
+                          />
+                        </div>
+                      )}
+                    </button>
+
+                    <AnimatePresence>
+                      {isLvlExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pl-4 pt-2">
+                            <ObjectiveTree objectives={level.objectives} />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         )}
