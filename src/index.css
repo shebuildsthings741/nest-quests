@@ -1,96 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fraunces:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm forest palette */
+    --background: 40 33% 97%;
+    --foreground: 25 20% 16%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 40 30% 99%;
+    --card-foreground: 25 20% 16%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 30% 99%;
+    --popover-foreground: 25 20% 16%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Deep forest green */
+    --primary: 152 45% 28%;
+    --primary-foreground: 40 30% 97%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm sand */
+    --secondary: 36 30% 92%;
+    --secondary-foreground: 25 20% 16%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 36 20% 93%;
+    --muted-foreground: 25 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Golden amber */
+    --accent: 38 80% 55%;
+    --accent-foreground: 25 20% 12%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 65% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 36 20% 88%;
+    --input: 36 20% 88%;
+    --ring: 152 45% 28%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom tokens */
+    --amber: 38 80% 55%;
+    --amber-foreground: 25 30% 12%;
+    --amber-muted: 38 60% 90%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --forest: 152 45% 28%;
+    --forest-light: 152 35% 42%;
+    --forest-muted: 152 25% 90%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --earth: 25 25% 40%;
+    --earth-light: 25 18% 65%;
+    --earth-muted: 25 15% 92%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sky: 200 50% 55%;
+    --sky-muted: 200 40% 92%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --rose: 350 55% 55%;
+    --rose-muted: 350 40% 93%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --violet: 270 40% 55%;
+    --violet-muted: 270 30% 93%;
 
-    --sidebar-border: 220 13% 91%;
+    /* Locked/fog state */
+    --locked: 36 10% 75%;
+    --locked-foreground: 36 8% 55%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Level/XP */
+    --xp: 38 80% 55%;
+    --streak: 18 75% 52%;
+
+    /* Shadows */
+    --shadow-card: 0 2px 12px -2px hsl(25 20% 16% / 0.06);
+    --shadow-hover: 0 8px 24px -4px hsl(25 20% 16% / 0.1);
+    --shadow-glow: 0 0 20px -4px hsl(152 45% 28% / 0.15);
+
+    --sidebar-background: 40 25% 96%;
+    --sidebar-foreground: 25 20% 16%;
+    --sidebar-primary: 152 45% 28%;
+    --sidebar-primary-foreground: 40 30% 97%;
+    --sidebar-accent: 36 30% 92%;
+    --sidebar-accent-foreground: 25 20% 16%;
+    --sidebar-border: 36 20% 88%;
+    --sidebar-ring: 152 45% 28%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 25 15% 10%;
+    --foreground: 36 25% 92%;
+    --card: 25 15% 13%;
+    --card-foreground: 36 25% 92%;
+    --popover: 25 15% 13%;
+    --popover-foreground: 36 25% 92%;
+    --primary: 152 40% 45%;
+    --primary-foreground: 25 15% 10%;
+    --secondary: 25 12% 18%;
+    --secondary-foreground: 36 25% 92%;
+    --muted: 25 12% 18%;
+    --muted-foreground: 36 15% 60%;
+    --accent: 38 70% 50%;
+    --accent-foreground: 25 15% 10%;
+    --destructive: 0 55% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 25 12% 20%;
+    --input: 25 12% 20%;
+    --ring: 152 40% 45%;
+    --sidebar-background: 25 15% 10%;
+    --sidebar-foreground: 36 25% 92%;
+    --sidebar-primary: 152 40% 45%;
+    --sidebar-primary-foreground: 25 15% 10%;
+    --sidebar-accent: 25 12% 18%;
+    --sidebar-accent-foreground: 36 25% 92%;
+    --sidebar-border: 25 12% 20%;
+    --sidebar-ring: 152 40% 45%;
   }
 }
 
@@ -100,6 +122,37 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+@layer utilities {
+  .text-gradient-warm {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--forest)) 0%, hsl(var(--forest-light)) 100%);
+  }
+
+  .bg-gradient-warm {
+    background-image: linear-gradient(135deg, hsl(var(--amber) / 0.08) 0%, hsl(var(--forest) / 0.04) 100%);
+  }
+
+  .bg-gradient-hero {
+    background-image: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--forest-muted)) 50%, hsl(var(--amber-muted)) 100%);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-card-hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
   }
 }
